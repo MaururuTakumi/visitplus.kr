@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Edge Runtime 최적화
+  // 실험적 기능
   experimental: {
-    runtime: 'edge',
+    // Edge Runtime은 각 라우트에서 개별 설정
   },
   
   // 이미지 최적화 설정
