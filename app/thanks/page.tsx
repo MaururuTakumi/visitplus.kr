@@ -6,8 +6,8 @@ import { useEffect } from 'react'
 export default function ThanksPage() {
   useEffect(() => {
     // 전환 추적을 위한 이벤트 발송
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'conversion', {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'conversion', {
         'send_to': 'AW-CONVERSION_ID/CONVERSION_LABEL',
         'value': 1.0,
         'currency': 'KRW'
