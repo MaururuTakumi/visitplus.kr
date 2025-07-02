@@ -7,11 +7,38 @@ export default function ThanksPage() {
   useEffect(() => {
     // 전환 추적을 위한 이벤트 발송
     if (typeof window !== 'undefined' && (window as any).gtag) {
+      // Google Ads 전환 추적
       (window as any).gtag('event', 'conversion', {
         'send_to': 'AW-CONVERSION_ID/CONVERSION_LABEL',
         'value': 1.0,
         'currency': 'KRW'
       })
+      
+      // GA4 향상된 전자상거래 이벤트
+      (window as any).gtag('event', 'purchase', {
+        'transaction_id': `lead_${Date.now()}`,
+        'value': 1.0,
+        'currency': 'KRW',
+        'items': [{
+          'item_id': 'lead_form',
+          'item_name': '출장 감정 신청',
+          'quantity': 1,
+          'price': 1.0
+        }]
+      })
+    }
+    
+    // Facebook Pixel 전환 이벤트
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('track', 'Lead', {
+        currency: 'KRW',
+        value: 1.0
+      })
+    }
+    
+    // Naver Analytics 전환
+    if (typeof window !== 'undefined' && (window as any).wcs) {
+      (window as any).wcs.cnv('1', '1')
     }
   }, [])
 

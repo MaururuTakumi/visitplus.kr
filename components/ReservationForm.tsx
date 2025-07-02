@@ -2,6 +2,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { sendGAEvent } from './GoogleAnalytics'
 
 interface FormData {
   name: string
@@ -232,6 +233,21 @@ export default function ReservationForm() {
       if (response.ok) {
         // 성공 애니메이션 표시
         setShowSuccess(true)
+        
+        // GA4 전환 이벤트 전송
+        sendGAEvent('form_submit', 'conversion', formData.category)
+        sendGAEvent('lead_generated', 'conversion', formData.area, 1)
+        
+        // GTM 데이터레이어 푸시
+        if ((window as any).dataLayer) {
+          (window as any).dataLayer.push({
+            event: 'lead_form_success',
+            category: formData.category,
+            area: formData.area,
+            utm_source: urlParams.get('utm_source') || 'direct'
+          })
+        }
+        
         setTimeout(() => {
           window.location.href = '/thanks'
         }, 1500)
@@ -400,6 +416,8 @@ export default function ReservationForm() {
                 onClick={() => {
                   if (formData.name && formData.phone && !errors.name && !errors.phone) {
                     setCurrentStep(2)
+                    // GA4イベント送信
+                    sendGAEvent('form_progress', 'engagement', 'step_1_completed')
                   } else {
                     setTouchedFields(new Set(['name', 'phone']))
                     validateForm()
@@ -503,6 +521,10 @@ export default function ReservationForm() {
                 onClick={() => {
                   if (formData.category && formData.area) {
                     setCurrentStep(3)
+                    // GA4イベント送信
+                    sendGAEvent('form_progress', 'engagement', 'step_2_completed', 2)
+                    sendGAEvent('brand_selected', 'engagement', formData.category)
+                    sendGAEvent('area_selected', 'engagement', formData.area)
                   } else {
                     setTouchedFields(new Set([...touchedFields, 'category', 'area']))
                     validateForm()

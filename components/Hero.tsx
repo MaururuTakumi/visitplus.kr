@@ -2,6 +2,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { sendGAEvent } from './GoogleAnalytics'
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false)
@@ -62,6 +63,7 @@ export default function Hero() {
         <div className={`flex flex-col sm:flex-row justify-center gap-4 mb-16 transition-all duration-1000 delay-800 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <a
             href="#reservation"
+            onClick={() => sendGAEvent('cta_click', 'engagement', 'hero_main_cta')}
             className="group relative inline-flex items-center justify-center px-10 py-5 text-lg font-bold text-white transition-all duration-300 ease-out bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 active:scale-100"
           >
             <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
