@@ -26,7 +26,7 @@ export default function Hero() {
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            일본 No.1 리유스 기업 • 100만건+ 거래 실적
+            명품 출장 감정 전문 • 안전한 거래
           </div>
         </div>
 
@@ -120,8 +120,8 @@ export default function Hero() {
               ),
               gradient: 'from-purple-500 to-pink-500',
               title: '투명한 감정 과정',
-              description: '일본 최대 리유스 기업의 노하우로 정확하고 공정한 감정을 약속합니다',
-              badge: '15년+ 전문성'
+              description: '전문 감정사의 노하우로 정확하고 공정한 감정을 약속합니다',
+              badge: '전문 감정'
             }
           ].map((feature, index) => (
             <div
