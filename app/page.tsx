@@ -25,10 +25,10 @@ export default function HomePage() {
             </nav>
             {/* 모바일 CTA */}
             <a
-              href="tel:02-1234-5678"
+              href="#reservation"
               className="md:hidden bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium"
             >
-              전화 문의
+              문의하기
             </a>
           </div>
         </div>
@@ -50,7 +50,7 @@ export default function HomePage() {
             <div>
               <h3 className="text-lg font-semibold mb-4">VisitPlus Korea</h3>
               <p className="text-gray-400 text-sm">
-                일본 최대 리유스 기업의 한국 서비스
+                명품 출장 감정 전문 서비스
                 <br />
                 명품 출장 감정 및 즉시 매입
               </p>
@@ -60,9 +60,9 @@ export default function HomePage() {
             <div>
               <h3 className="text-lg font-semibold mb-4">연락처</h3>
               <div className="space-y-2 text-sm text-gray-400">
-                <p>전화: 02-1234-5678</p>
-                <p>카카오톡: @visitplus</p>
+                <p>문의: 상단 문의 양식을 이용해주세요</p>
                 <p>영업시간: 평일 10:00 - 19:00</p>
+                <p>연락처: 문의 제출 후 연락드립니다</p>
               </div>
             </div>
             
@@ -71,7 +71,7 @@ export default function HomePage() {
               <h3 className="text-lg font-semibold mb-4">고객 안내</h3>
               <div className="space-y-2 text-sm text-gray-400">
                 <p>사업자등록번호: 123-45-67890</p>
-                <p>대표: 김대표</p>
+                <p>대표: 하야시 타쿠미</p>
                 <p>
                   <a href="/privacy" className="hover:text-white transition-colors">
                     개인정보처리방침
