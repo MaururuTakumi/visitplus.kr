@@ -1,10 +1,11 @@
-// Edge API Route - Google Sheets/HubSpot 리드 생성
+// Edge API Route - Supabase リード保存
 import { NextRequest, NextResponse } from 'next/server'
+import { supabase } from '@/lib/supabase'
 
-// Edge Runtime 설정
+// Edge Runtime 設定
 export const runtime = 'edge'
 
-// CORS 헤더
+// CORS ヘッダー
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -19,7 +20,7 @@ export async function OPTIONS() {
 // POST 요청 처리
 export async function POST(request: NextRequest) {
   try {
-    // JSON 데이터 파싱
+    // JSON データ 파싱
     const data = await request.json()
     
     // 필수 필드 추출
@@ -33,74 +34,36 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    // Google Sheets에 데이터 전송
-    const googleSheetsWebhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL
+    // IP 주소와 User Agent 추출
+    const ip_address = request.headers.get('x-forwarded-for') || 
+                      request.headers.get('x-real-ip') || 
+                      'unknown'
+    const user_agent = request.headers.get('user-agent') || 'unknown'
     
-    if (googleSheetsWebhookUrl) {
-      try {
-        const sheetsResponse = await fetch(googleSheetsWebhookUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name,
-            email,
-            phone,
-            utm_source: utm_source || 'direct',
-            utm_medium: utm_medium || 'none',
-            utm_campaign: utm_campaign || 'none'
-          })
-        })
-        
-        if (!sheetsResponse.ok) {
-          console.error('Google Sheets API error:', await sheetsResponse.text())
+    // Supabase에 데이터 저장
+    const { data: submission, error } = await supabase
+      .from('form_submissions')
+      .insert([
+        {
+          name,
+          email,
+          phone,
+          utm_source: utm_source || 'direct',
+          utm_medium: utm_medium || 'none',
+          utm_campaign: utm_campaign || 'none',
+          ip_address,
+          user_agent
         }
-      } catch (sheetsError) {
-        console.error('Google Sheets submission error:', sheetsError)
-        // Google Sheets 실패는 전체 프로세스를 중단시키지 않음
-      }
+      ])
+      .select()
+      .single()
+    
+    if (error) {
+      console.error('Supabase error:', error)
+      throw new Error('데이터 저장 실패')
     }
     
-    // HubSpot API (옵션)
-    const hubspotApiKey = process.env.HUBSPOT_API_KEY
-    
-    if (hubspotApiKey && hubspotApiKey !== 'dummy_hubspot_api_key_for_development') {
-      try {
-        const contactData = {
-          properties: {
-            firstname: name,
-            email: email,
-            phone: phone,
-            utm_source: utm_source || 'direct',
-            utm_medium: utm_medium || 'none',
-            utm_campaign: utm_campaign || 'none',
-            lead_source: 'Korea LP - Demand Validation',
-            submission_date: new Date().toISOString()
-          }
-        }
-        
-        const hubspotResponse = await fetch(
-          'https://api.hubapi.com/crm/v3/objects/contacts',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${hubspotApiKey}`
-            },
-            body: JSON.stringify(contactData)
-          }
-        )
-        
-        if (!hubspotResponse.ok) {
-          console.error('HubSpot API error:', await hubspotResponse.text())
-        }
-      } catch (hubspotError) {
-        console.error('HubSpot submission error:', hubspotError)
-      }
-    }
-    
-    // Resend 이메일 발송 (옵션)
+    // 선택적: 이메일 알림 (Resend API)
     const resendApiKey = process.env.RESEND_API_KEY
     
     if (resendApiKey && email) {
@@ -149,12 +112,15 @@ export async function POST(request: NextRequest) {
                 <li>UTM Medium: ${utm_medium || 'none'}</li>
                 <li>UTM Campaign: ${utm_campaign || 'none'}</li>
                 <li>신청일시: ${new Date().toLocaleString('ko-KR')}</li>
+                <li>IP: ${ip_address}</li>
               </ul>
+              <p><a href="https://supabase.com/dashboard/project/_/editor/form_submissions">Supabase에서 확인</a></p>
             `
           })
         })
       } catch (emailError) {
         console.error('Email sending error:', emailError)
+        // 이메일 전송 실패는 전체 프로세스를 중단시키지 않음
       }
     }
     
@@ -162,7 +128,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: '문의가 접수되었습니다'
+        message: '문의가 접수되었습니다',
+        id: submission?.id
       },
       { status: 200, headers: corsHeaders }
     )
