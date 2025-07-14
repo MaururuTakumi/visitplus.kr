@@ -24,10 +24,10 @@ export async function POST(request: NextRequest) {
     const data = await request.json()
     
     // 필수 필드 추출
-    const { name, email, phone, utm_source, utm_medium, utm_campaign } = data
+    const { name, phone, utm_source, utm_medium, utm_campaign } = data
     
     // 유효성 검증
-    if (!name || !email || !phone) {
+    if (!name || !phone) {
       return NextResponse.json(
         { error: '필수 정보가 누락되었습니다' },
         { status: 400, headers: corsHeaders }
@@ -48,7 +48,6 @@ export async function POST(request: NextRequest) {
         .insert([
           {
             name,
-            email,
             phone,
             utm_source: utm_source || 'direct',
             utm_medium: utm_medium || 'none',
@@ -69,10 +68,11 @@ export async function POST(request: NextRequest) {
       }
     } else {
       console.log('Supabase가 설정되지 않음 - 로컬 로그로 기록')
-      console.log('Lead data:', { name, email, phone, utm_source, utm_medium, utm_campaign })
+      console.log('Lead data:', { name, phone, utm_source, utm_medium, utm_campaign })
     }
     
-    // 선택적: 이메일 알림 (Resend API)
+    // 선택적: 이메일 알림 (Resend API) - 현재 비활성화 (email 필드 없음)
+    /*
     const resendApiKey = process.env.RESEND_API_KEY
     
     if (resendApiKey && email) {
@@ -132,6 +132,7 @@ export async function POST(request: NextRequest) {
         // 이메일 전송 실패는 전체 프로세스를 중단시키지 않음
       }
     }
+    */
     
     // 성공 응답
     return NextResponse.json(

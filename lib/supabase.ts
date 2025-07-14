@@ -16,7 +16,6 @@ export const isSupabaseConfigured = () => {
 export type FormSubmission = {
   id?: string
   name: string
-  email: string
   phone: string
   utm_source?: string
   utm_medium?: string

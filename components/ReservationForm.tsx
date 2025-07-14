@@ -6,14 +6,12 @@ import { sendGAEvent } from './GoogleAnalytics'
 
 interface FormData {
   name: string
-  email: string
   phone: string
 }
 
 export default function ReservationForm() {
   const [formData, setFormData] = useState<FormData>({
     name: '',
-    email: '',
     phone: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -27,12 +25,6 @@ export default function ReservationForm() {
       case 'name':
         if (!value.trim()) return '이름을 입력해주세요'
         if (value.length < 2) return '이름은 2자 이상이어야 합니다'
-        return undefined
-      
-      case 'email':
-        if (!value.trim()) return '이메일을 입력해주세요'
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(value)) return '올바른 이메일 형식이 아닙니다'
         return undefined
       
       case 'phone':
@@ -88,7 +80,7 @@ export default function ReservationForm() {
     e.preventDefault()
     
     if (!validateForm()) {
-      setTouchedFields(new Set(['name', 'email', 'phone']))
+      setTouchedFields(new Set(['name', 'phone']))
       return
     }
     
@@ -209,41 +201,6 @@ export default function ReservationForm() {
               )}
             </div>
 
-            {/* 이메일 입력 */}
-            <div className="relative">
-              <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-3">
-                이메일 *
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <input
-                  type="email"
-                  id="email"
-                  value={formData.email}
-                  onChange={(e) => handleFieldChange('email', e.target.value)}
-                  className={`w-full pl-12 pr-4 py-4 border-2 rounded-xl transition-all duration-200 ${
-                    errors.email && touchedFields.has('email')
-                      ? 'border-red-500 focus:ring-red-500' 
-                      : 'border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100'
-                  }`}
-                  placeholder="example@email.com"
-                />
-                {formData.email && !errors.email && (
-                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-                    <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                )}
-              </div>
-              {errors.email && touchedFields.has('email') && (
-                <p className="mt-2 text-sm text-red-600">{errors.email}</p>
-              )}
-            </div>
 
             {/* 전화번호 입력 */}
             <div className="relative">
