@@ -138,7 +138,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         {/* Google Analytics */}
-        <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_ID || ''} />
+        <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ''} />
         
         {/* Vercel Analytics */}
         <Analytics />
