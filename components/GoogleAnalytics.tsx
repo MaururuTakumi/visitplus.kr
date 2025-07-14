@@ -3,7 +3,7 @@
 
 import Script from 'next/script'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 
 declare global {
   interface Window {
@@ -20,7 +20,7 @@ interface GoogleAnalyticsProps {
   measurementId: string
 }
 
-export default function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
+function GoogleAnalyticsInner({ measurementId }: GoogleAnalyticsProps) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
@@ -35,6 +35,10 @@ export default function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps)
     })
   }, [pathname, searchParams, measurementId])
 
+  return null
+}
+
+export default function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
   if (!measurementId) {
     return null
   }
@@ -57,6 +61,9 @@ export default function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps)
           `,
         }}
       />
+      <Suspense fallback={null}>
+        <GoogleAnalyticsInner measurementId={measurementId} />
+      </Suspense>
     </>
   )
 }

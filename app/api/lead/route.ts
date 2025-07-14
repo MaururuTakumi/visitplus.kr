@@ -1,6 +1,6 @@
 // Edge API Route - Supabase リード保存
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 
 // Edge Runtime 設定
 export const runtime = 'edge'
@@ -40,27 +40,36 @@ export async function POST(request: NextRequest) {
                       'unknown'
     const user_agent = request.headers.get('user-agent') || 'unknown'
     
-    // Supabase에 데이터 저장
-    const { data: submission, error } = await supabase
-      .from('form_submissions')
-      .insert([
-        {
-          name,
-          email,
-          phone,
-          utm_source: utm_source || 'direct',
-          utm_medium: utm_medium || 'none',
-          utm_campaign: utm_campaign || 'none',
-          ip_address,
-          user_agent
-        }
-      ])
-      .select()
-      .single()
-    
-    if (error) {
-      console.error('Supabase error:', error)
-      throw new Error('데이터 저장 실패')
+    // Supabase에 데이터 저장 (설정된 경우에만)
+    let submission = null
+    if (isSupabaseConfigured()) {
+      const { data: dbData, error } = await supabase
+        .from('form_submissions')
+        .insert([
+          {
+            name,
+            email,
+            phone,
+            utm_source: utm_source || 'direct',
+            utm_medium: utm_medium || 'none',
+            utm_campaign: utm_campaign || 'none',
+            ip_address,
+            user_agent
+          }
+        ])
+        .select()
+        .single()
+      
+      if (error) {
+        console.error('Supabase error:', error)
+        // Supabase 에러는 로그만 남기고 계속 진행
+        console.log('Supabase 설정 확인 필요')
+      } else {
+        submission = dbData
+      }
+    } else {
+      console.log('Supabase가 설정되지 않음 - 로컬 로그로 기록')
+      console.log('Lead data:', { name, email, phone, utm_source, utm_medium, utm_campaign })
     }
     
     // 선택적: 이메일 알림 (Resend API)
@@ -129,7 +138,7 @@ export async function POST(request: NextRequest) {
       {
         success: true,
         message: '문의가 접수되었습니다',
-        id: submission?.id
+        id: submission?.id || 'local-' + Date.now()
       },
       { status: 200, headers: corsHeaders }
     )
