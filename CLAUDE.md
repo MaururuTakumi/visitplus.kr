@@ -155,5 +155,22 @@ HubSpot API キーは .env の HUBSPOT_API_KEY で管理し、Vercel 環境変�
 
 LINE VOOM / Kakao 채널公式アカウント運用設計
 
+11. 開発フロー（Claude Code × Gemini CLI 連携）
+
+三位一体の開発原則:
+1. Claude Code が実装計画を立案
+2. Gemini が計画を客観的にレビュー
+3. フィードバックを反映して実装
+
+利用可能なコマンド:
+- ask-gemini-plan "計画内容" - 実装計画のレビュー依頼
+- ask-gemini-error "エラー" - エラー解決支援
+- ask-gemini-review -c FILE - コードレビュー
+- ask-gemini-tech "技術" - 技術調査・比較
+- ask-gemini-help - コマンド一覧表示
+
+開発フローテンプレート: dev-flow-template.md
+作業ログ: worklog/YYYY-MM-DD-HHMM.md
+
 このファイルは新しい Claude セッション毎に読み込まれ、プロジェクト文脈を保持します。変更が生じた場合は随時アップデートしてください。
 
